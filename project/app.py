@@ -8,8 +8,12 @@ def index():
     if request.method == 'POST':
         user_input = request.form.get('user_input')
         cmd = f'echo $({user_input})'
-        if 'flag' in cmd:
+        if any(keyword in cmd for keyword in ['flag', 'what', '?']):
             return render_template('index.html', result='No!')
+        
+        if '*' in cmd:
+            if any(kw not in cmd for kw in ['cat', '-']):
+                return render_template('index.html', result='No!')
 
         try:
             output = subprocess.check_output(['/bin/sh', '-c', cmd], timeout=5)
